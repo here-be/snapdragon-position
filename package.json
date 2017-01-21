@@ -1,0 +1,60 @@
+{
+  "name": "snapdragon-position",
+  "description": "Snapdragon util and plugin for setting the position on an AST node.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/jonschlinkert/snapdragon-position",
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/snapdragon-position",
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/snapdragon-position/issues"
+  },
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "define-property": "^0.2.5",
+    "snapdragon-node": "^0.2.0"
+  },
+  "keywords": [
+    "generategenerator",
+    "position",
+    "snapdragon"
+  ],
+  "devDependencies": {
+    "gulp-format-md": "^0.1.11",
+    "mocha": "^3.2.0"
+  },
+  "verb": {
+    "toc": false,
+    "layout": "default",
+    "tasks": [
+      "readme"
+    ],
+    "plugins": [
+      "gulp-format-md"
+    ],
+    "related": {
+      "list": [
+        "snapdragon",
+        "snapdragon-util",
+        "snapdragon-capture",
+        "snapdragon-node"
+      ]
+    },
+    "reflinks": [
+      "verb",
+      "verb-generate-readme"
+    ],
+    "lint": {
+      "reflinks": true
+    }
+  }
+}
