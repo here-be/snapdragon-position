@@ -1,6 +1,6 @@
 # snapdragon-position [![NPM version](https://img.shields.io/npm/v/snapdragon-position.svg?style=flat)](https://www.npmjs.com/package/snapdragon-position) [![NPM monthly downloads](https://img.shields.io/npm/dm/snapdragon-position.svg?style=flat)](https://npmjs.org/package/snapdragon-position)  [![NPM total downloads](https://img.shields.io/npm/dt/snapdragon-position.svg?style=flat)](https://npmjs.org/package/snapdragon-position) [![Linux Build Status](https://img.shields.io/travis/jonschlinkert/snapdragon-position.svg?style=flat&label=Travis)](https://travis-ci.org/jonschlinkert/snapdragon-position)
 
-> Snapdragon util and plugin for setting the position on an AST node.
+> Snapdragon util and plugin for patching the position on an AST node.
 
 ## Install
 
@@ -23,7 +23,7 @@ var parser = new Snapdragon.Parser();
 parser.use(position());
 ```
 
-### [position](index.js#L58)
+### [position](index.js#L57)
 
 Mark position and patch `node.position` with `start` and `end` line and column.
 

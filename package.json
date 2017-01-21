@@ -1,6 +1,6 @@
 {
   "name": "snapdragon-position",
-  "description": "Snapdragon util and plugin for setting the position on an AST node.",
+  "description": "Snapdragon util and plugin for patching the position on an AST node.",
   "version": "0.1.0",
   "homepage": "https://github.com/jonschlinkert/snapdragon-position",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
@@ -20,7 +20,6 @@
     "test": "mocha"
   },
   "dependencies": {
-    "define-property": "^0.2.5",
     "snapdragon-node": "^0.2.0"
   },
   "keywords": [
