@@ -1,47 +1,65 @@
 'use strict';
 
 require('mocha');
-var assert = require('assert');
-var Node = require('snapdragon-node');
-var position = require('..').position;
+const use = require('use');
+const assert = require('assert');
+const Token = require('snapdragon-token');
+const position = require('..');
+let lexer;
 
+class Lexer {
+  constructor() {
+    this.isLexer = true;
+    this.column = 0;
+    this.line = 0;
+    use(this);
+  }
+  lex(tok) {
+    return tok;
+  }
+}
 
 describe('snapdragon-position', function() {
+  beforeEach(function() {
+    lexer = new Lexer();
+    lexer.use(position());
+  });
+
   it('should export a function', function() {
-    assert.equal(typeof Node, 'function');
+    assert.equal(typeof position, 'function');
   });
 
-  it('should work when passed to a Node', function() {
-    var pos = position();
-    var node = pos(new Node());
+  it('should work when passed to a Token', function() {
+    var pos = lexer.position();
+    var token = pos(new Token({type: 'nothing'}));
 
-    assert(node.position);
-    assert(node.position.start);
-    assert.equal(node.position.start.line, 0);
-    assert.equal(node.position.start.column, 0);
+    assert(token.position);
+    assert(token.position.start);
+    assert.equal(token.position.start.line, 0);
+    assert.equal(token.position.start.column, 0);
 
-    assert(node.position.end);
-    assert.equal(node.position.end.line, 0);
-    assert.equal(node.position.end.column, 0);
+    assert(token.position.end);
+    assert.equal(token.position.end.line, 0);
+    assert.equal(token.position.end.column, 0);
   });
 
-  it('should work when called on a node instance', function() {
-    var pos = position();
-    var node = new Node();
-    pos(node)
+  it('should work when called on a token instance', function() {
+    var pos = lexer.position();
+    var token = new Token({type: 'nothing'});
+    pos(token)
 
-    assert(node.position);
-    assert(node.position.start);
-    assert.equal(node.position.start.line, 0);
-    assert.equal(node.position.start.column, 0);
+    assert(token.position);
+    assert(token.position.start);
+    assert.equal(token.position.start.line, 0);
+    assert.equal(token.position.start.column, 0);
 
-    assert(node.position.end);
-    assert.equal(node.position.end.line, 0);
-    assert.equal(node.position.end.column, 0);
+    assert(token.position.end);
+    assert.equal(token.position.end.line, 0);
+    assert.equal(token.position.end.column, 0);
   });
 
-  it('should create a new Node with the given position and val', function() {
-    var pos = position();
+  it('should create a new Token with the given position and val', function() {
+    var pos = lexer.position();
     var obj = pos({});
 
     assert(obj.position);

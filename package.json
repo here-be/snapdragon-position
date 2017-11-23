@@ -20,17 +20,25 @@
     "test": "mocha"
   },
   "dependencies": {
-    "snapdragon-node": "^0.2.0"
+    "define-property": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0",
+    "use": "^3.0.0",
+    "snapdragon-token": "^1.0.2",
+    "gulp-format-md": "^0.1.11"
   },
   "keywords": [
-    "generategenerator",
+    "compile",
+    "compiler",
+    "convert",
+    "parse",
+    "parser",
     "position",
-    "snapdragon"
+    "render",
+    "snapdragon",
+    "transform"
   ],
-  "devDependencies": {
-    "gulp-format-md": "^0.1.11",
-    "mocha": "^3.2.0"
-  },
   "verb": {
     "toc": false,
     "layout": "default",
@@ -43,9 +51,9 @@
     "related": {
       "list": [
         "snapdragon",
-        "snapdragon-util",
         "snapdragon-capture",
-        "snapdragon-node"
+        "snapdragon-node",
+        "snapdragon-util"
       ]
     },
     "reflinks": [

@@ -1,85 +1,94 @@
 'use strict';
 
-var Node = require('snapdragon-node');
+const define = require('define-property');
 
 /**
- * Store the position for a node
+ * Store the position for a token
  */
 
-function Position(start, parser) {
-  this.start = start;
-  this.end = { line: parser.line, column: parser.column };
+class Position {
+  constructor(start, lexer) {
+    this.start = start;
+    this.end = { line: lexer.line, column: lexer.column };
+  }
+}
+
+function position(lexer) {
+  var start = { line: lexer.line, column: lexer.column };
+  define(start, 'consumed', lexer.consumed);
+  define(start, 'input', lexer.input);
+
+  return (token) => {
+    token.position = new lexer.Position(start, lexer);
+    return token;
+  };
 }
 
 /**
- * Adds a `.position` method to a [snapdragon][] `Parser` instance.
+ * Adds a `.position` method to a [snapdragon-lexer][] instance
+ * for patching the start and end positions onto tokens.
  *
  * ```js
- * var Snapdragon = require('snapdragon');
+ * var Lexer = require('snapdragon-lexer');
  * var position = require('snapdragon-position');
- * var parser = new Snapdragon.Parser();
- * parser.use(position());
+ * var lexer = new Lexer();
+ * lexer.use(position());
  * ```
  * @api public
  */
 
-module.exports = function() {
-  return function(snapdragon) {
-    if (snapdragon.isSnapdragon) {
-      snapdragon.parser.define('position', position);
+module.exports = () => {
+  let lex = null;
 
-    } else if (snapdragon.isParser) {
-      snapdragon.define('position', position);
-
-    } else {
-      throw new Error('expected an instance of snapdragon or snapdragon.parser');
+  return function(lexer) {
+    if (!this.isLexer) {
+      throw new Error('expected a Snapdragon.Lexer instance');
     }
+
+    /**
+     * Set the `Position` class on `lexer.Position`
+     */
+
+    this.Position = Position;
+
+    /**
+     * Mark current position and patch `token.position` with
+     * `start` and `end` line and column.
+     *
+     * ```js
+     * lexer.set('star', function(token) {
+     *   var pos = this.position();
+     *   var match = this.match(/foo/);
+     *   if (match) {
+     *     // pass `pos` to `this.token` to patch position
+     *     return pos(this.token(match[0]));
+     *   }
+     * });
+     * ```
+     * @return {Function} Returns a function that takes `token` and is called before returning the token in a lexer visitor function.
+     * @api public
+     */
+
+    this.position = () => position(this);
+
+    /**
+     * Override the `.lex` method to patch position onto returned nodes
+     */
+
+    if (!lex) lex = this.lex.bind(this);
+    this.lex = (type) => {
+      const pos = this.position();
+      const tok = lex(type);
+      if (tok) {
+        return pos(tok);
+      }
+    };
   };
 };
-
-/**
- * Mark position and patch `node.position` with `start` and `end` line and column.
- *
- * ```js
- * parser.set('foo', function(node) {
- *   var pos = this.position();
- *   var match = this.match(/foo/);
- *   if (match) {
- *     // pass `pos` to `this.node` to patch position
- *     return pos(this.node(match[0]));
- *   }
- * });
- * ```
- * @return {Function} Returns a function that takes `node` and is called before returning the node in a parser visitor function.
- * @api public
- */
-
-function position() {
-  var self = this || { line: 0, column: 0, stack: [] };
-  var start = { line: self.line, column: self.column };
-  var parsed = self.parsed;
-
-  return function pos(node) {
-    if (!node.isNode) node = new Node(node);
-
-    node.position = new Position(start, self);
-    if (node.isNode) {
-      node.define('parsed', parsed);
-      node.define('inside', self.stack.length > 0);
-      node.define('rest', self.input);
-    }
-    return node;
-  };
-}
 
 /**
  * Expose `Position`
  */
 
 module.exports.Position = Position;
-
-/**
- * Expose `position`
- */
-
 module.exports.position = position;
