@@ -1,7 +1,7 @@
 {
   "name": "snapdragon-position",
   "description": "Snapdragon util and plugin for patching the position on an AST node.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "homepage": "https://github.com/here-be-snapdragons/snapdragon-position",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "repository": "here-be-snapdragons/snapdragon-position",
