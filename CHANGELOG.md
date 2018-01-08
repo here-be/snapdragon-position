@@ -40,13 +40,13 @@ Changelog entries are classified using the following labels _(from [keep-a-chang
 
 - Refactor to work with [snapdragon-lexer][lexer]
 
-## [0.1.0] 
+## 0.1.0
 
 - first commit
 
-[1.0.0]: https://github.com/here-be/snapdragon-token/compare/0.1.0...1.0.0
+[2.0.0]: https://github.com/here-be/snapdragon-position/compare/1.0.0...2.0.0
+[1.0.0]: https://github.com/here-be/snapdragon-position/compare/0.1.0...1.0.0
 [keep-a-changelog]: https://github.com/olivierlacan/keep-a-changelog
-
 
 [tokenizer]: https://github.com/here-be/snapdragon-tokenizer
 [lexer]: https://github.com/here-be/snapdragon-lexer
