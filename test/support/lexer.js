@@ -1,13 +1,8 @@
 'use strict';
 
+const Token = require('./token');
 const Emitter = require('@sellside/emitter');
 const use = require('use');
-class Token {
-  constructor(type, val) {
-    this.type = type;
-    this.value = val;
-  }
-}
 
 class Lexer extends Emitter {
   constructor(options) {
@@ -17,7 +12,7 @@ class Lexer extends Emitter {
     this.Token = this.options.Token;
     this.handlers = {};
     this.types = [];
-    this.loc = { index: 0, column: 1, line: 1 };
+    this.loc = { index: 0, column: 0, line: 1 };
     this.tokens = [];
     this.consumed = '';
     this.input = '';
@@ -37,12 +32,13 @@ class Lexer extends Emitter {
   handle(type) {
     return this.handlers[type].call(this);
   }
+  lex(type) {
+    return this.handlers[type].call(this);
+  }
   advance() {
     for (var i = 0; i < this.types.length; i++) {
       var tok = this.handle(this.types[i]);
-      if (tok) {
-        return tok;
-      }
+      if (tok) return tok;
     }
   }
   capture(type, re) {

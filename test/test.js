@@ -1,64 +1,136 @@
 'use strict';
 
 require('mocha');
+const use = require('use');
 const assert = require('assert');
 const Lexer = require('./support/lexer');
+const Token = require('./support/token');
 const position = require('..');
 let lexer;
 
-class Token {}
-
 describe('snapdragon-position', function() {
   beforeEach(function() {
-    lexer = new Lexer({Token: Token});
+    lexer = new Lexer();
     lexer.use(position());
   });
 
-  it('should export a function', function() {
-    assert.equal(typeof position, 'function');
+  it('should patch a `.position` method onto the instance', function() {
+    assert.equal(typeof lexer.position, 'function');
   });
 
-  it('should work when passed to a Token', function() {
-    var pos = lexer.position();
-    var token = pos(new Token({type: 'nothing'}));
-
-    assert(token.position);
-    assert(token.position.start);
-    assert.equal(token.position.start.line, 1);
-    assert.equal(token.position.start.column, 1);
-
-    assert(token.position.end);
-    assert.equal(token.position.end.line, 1);
-    assert.equal(token.position.end.column, 1);
+  it('should patch a `.location` method onto the instance', function() {
+    assert.equal(typeof lexer.location, 'function');
   });
 
-  it('should work when called on a token instance', function() {
-    var pos = lexer.position();
-    var token = new Token({type: 'nothing'});
+  it('should throw an error if instance is invalid', function() {
+    const foo = {};
+    use(foo);
+    assert.throws(function() {
+      foo.use(position());
+    }, /snapdragon/i);
+  });
+
+  it('should add `token.position` when called on a Token', function() {
+    lexer.input = 'foo';
+    const pos = lexer.position();
+    let token = new Token();
     pos(token);
 
-    assert(token.position);
-    assert(token.position.start);
-    assert.equal(token.position.start.line, 1);
-    assert.equal(token.position.start.column, 1);
+    assert.deepEqual(token.position, {
+      start: {
+        index: 0,
+        column: 0,
+        line: 1
+      },
+      end: {
+        index: 0,
+        column: 0,
+        line: 1
+      }
+    });
 
-    assert(token.position.end);
-    assert.equal(token.position.end.line, 1);
-    assert.equal(token.position.end.column, 1);
+    lexer.capture('text', /^\w+/);
+    lexer.advance();
+    token = pos(new Token());
+
+    assert.deepEqual(token.position, {
+      start: {
+        index: 0,
+        column: 0,
+        line: 1
+      },
+      end: {
+        index: 3,
+        column: 3,
+        line: 1
+      }
+    });
   });
 
-  it('should create a new Token with the given position and val', function() {
-    var pos = lexer.position();
-    var obj = pos({});
+  it('should return a Position object', function() {
+    lexer.input = 'foo';
 
-    assert(obj.position);
-    assert(obj.position.start);
-    assert.equal(obj.position.start.line, 1);
-    assert.equal(obj.position.start.column, 1);
+    assert.deepEqual(lexer.location(), {
+      index: 0,
+      column: 0,
+      line: 1
+    });
 
-    assert(obj.position.end);
-    assert.equal(obj.position.end.line, 1);
-    assert.equal(obj.position.end.column, 1);
+    lexer.capture('text', /^\w+/);
+    lexer.advance();
+
+    assert.deepEqual(lexer.location(), {
+      index: 3,
+      column: 3,
+      line: 1
+    });
+  });
+
+  it('should return the token', function() {
+    const pos = lexer.position();
+    const token = pos(new Token({type: 'nothing'}));
+    assert(token instanceof Token);
+  });
+
+  it('should expose a "range" getter on token.position', function() {
+    lexer.input = 'abc';
+    lexer.capture('text', /^\w+/);
+    const token = lexer.advance();
+    assert.deepEqual(token.position.range, [0, 3]);
+  });
+
+  it('should emit "position"', function(cb) {
+    let count = 0;
+    lexer.input = 'abc';
+    lexer.on('position', () => count++);
+    lexer.capture('text', /^\w+/);
+    lexer.lex('text');
+    assert.equal(count, 1);
+    cb();
+  });
+
+  it('should lex until a match is found (integration test)', function(cb) {
+    let count = 0;
+    lexer.input = 'abc';
+    lexer.on('position', () => count++);
+    lexer.capture('nothing', /^aaalalalalal/);
+    lexer.capture('text', /^\w+/);
+    lexer.lex('nothing');
+    lexer.lex('text');
+    assert.equal(count, 1);
+    cb();
+  });
+
+  it('should not fail if `.emit` is undefined', function() {
+    const lexer2 = new Lexer();
+    lexer2.use(position());
+    let count = 0;
+    lexer2.emit = null;
+    lexer.on('position', () => count++);
+    lexer2.input = 'abc';
+    lexer2.capture('text', /^\w+/);
+    lexer2.lex('text');
+    assert.equal(count, 0);
   });
 
   it('should patch line number onto token.position', function() {
@@ -72,12 +144,12 @@ describe('snapdragon-position', function() {
     assert.deepEqual(lexer.advance().position, {
       start: {
         index: 0,
-        column: 1,
+        column: 0,
         line: 1
       },
       end: {
         index: 3,
-        column: 4,
+        column: 3,
         line: 1
       }
     });
@@ -85,7 +157,7 @@ describe('snapdragon-position', function() {
     assert.deepEqual(lexer.advance().position, {
       start: {
         index: 3,
-        column: 4,
+        column: 3,
         line: 1
       },
       end: {
