@@ -16,7 +16,7 @@ $ npm install --save snapdragon-position
 
 When used as a plugin, this adds a `.position()` method to a [snapdragon-lexer](https://github.com/here-be-snapdragons/snapdragon-lexer) instance, for adding [position information](#position-information) to tokens.
 
-If you prefer `.loc` over `.position`, see [snapdragon-location][].
+If you prefer `.loc` over `.position`, use [snapdragon-location][] instead.
 
 **Example**
 
@@ -38,11 +38,11 @@ Adds a `.position` object to the token, like this:
 ```js
 Token {
   type: 'text',
-  val: 'foo',
+  value: 'foo',
   match: [ 'foo', index: 0, input: 'foo/*' ],
-  position: {
-    start: { index: 0, column: 1, line: 1 },
-    end: { index: 3, column: 4, line: 1 },
+  position: Position {
+    start: Location { index: 0, column: 1, line: 1 },
+    end: Location { index: 3, column: 4, line: 1 },
     range: [0, 3] // range is a getter
   } 
 }
@@ -52,7 +52,7 @@ Token {
 
 The main export is a function that can either be called directly to add a `.position` to a single token, or used as a plugin function with `lexer.use()`.
 
-### [position](index.js#L52)
+### [position](index.js#L50)
 
 Sets the `start` location and returns a function for setting the `end` location.
 
@@ -76,7 +76,7 @@ var token = pos(lexer.advance());
 console.log(token);
 ```
 
-### [.plugin](index.js#L77)
+### [.plugin](index.js#L75)
 
 Use as a plugin to add a `.position` method to your [snapdragon-lexer](https://github.com/here-be-snapdragons/snapdragon-lexer) instance, which automatically adds a position object to tokens when the `.handle()` method is used.
 
@@ -89,22 +89,22 @@ var lexer = new Lexer();
 lexer.use(position());
 ```
 
-### [.location](index.js#L100)
+### [.location](index.js#L98)
 
 Get the current cursor location, with `index`, `line` and `column`. This is used in the [.position()](#position) method to add the "start" and "end" locations to the position object, you can also call it directly when needed.
 
-* `returns` **{Object}**: Returns an object with the current target location, with cursor `index`, `line`, and `column` numbers.
+* `returns` **{Object}**: Returns an object with the current lexer location, with cursor `index`, `line`, and `column` numbers.
 
 **Example**
 
 ```js
-const Lexer = require('snapdragon-target');
-const target = new Lexer();
-console.log(target.location());
+const Lexer = require('snapdragon-lexer');
+const lexer = new Lexer();
+console.log(lexer.location());
 //=> Location { index: 0, line: 1, column: 1 };
 ```
 
-### [.position](index.js#L124)
+### [.position](index.js#L122)
 
 Returns a function for getting the current position.
 
@@ -113,16 +113,16 @@ Returns a function for getting the current position.
 **Example**
 
 ```js
-const Lexer = require('snapdragon-target');
-const target = new Lexer('foo/bar');
-target.use(position.plugin());
+const Lexer = require('snapdragon-lexer');
+const lexer = new Lexer('foo/bar');
+lexer.use(position.plugin());
 
-target.set('text', function(tok) {
-  // get start position before advancing target
+lexer.set('text', function(tok) {
+  // get start position before advancing lexer
   const pos = this.position();
   const match = this.match(/^\w+/);
   if (match) {
-    // get end position after advancing target (with .match)
+    // get end position after advancing lexer (with .match)
     return pos(this.token(match));
   }
 });
