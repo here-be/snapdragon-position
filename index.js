@@ -50,12 +50,12 @@ class Position {
  */
 
 function position(lexer) {
-  if (!lexer) return position.plugin();
+  if (!isValid(lexer)) return position.plugin();
   const start = new Location(lexer);
 
   return (tok) => {
     tok.position = new Position(start, new Location(lexer));
-    if (lexer.emit) lexer.emit('position', tok);
+    lexer.emit('position', tok);
     return tok;
   };
 }
@@ -63,7 +63,7 @@ function position(lexer) {
 /**
  * Use as a plugin to add a `.position` method to your [snapdragon-lexer][]
  * instance, which automatically adds a position object to tokens when the
- * `.lex()` method is used.
+ * `.handle()` method is used.
  *
  * ```js
  * var Lexer = require('snapdragon-lexer');
@@ -75,9 +75,9 @@ function position(lexer) {
  */
 
 position.plugin = () => {
-  return function(lexer) {
-    if (!lexer.isLexer) {
-      throw new Error('expected a Snapdragon.Lexer instance');
+  return function(target) {
+    if (!isValid(target)) {
+      throw new Error('expected a snapdragon Lexer or Tokenizer instance');
     }
 
     /**
@@ -87,32 +87,32 @@ position.plugin = () => {
      * when needed.
      *
      * ```js
-     * const Lexer = require('snapdragon-lexer');
-     * const lexer = new Lexer();
-     * console.log(lexer.location());
+     * const Lexer = require('snapdragon-target');
+     * const target = new Lexer();
+     * console.log(target.location());
      * //=> Location { index: 0, line: 1, column: 1 };
      * ```
-     * @return {Object} Returns an object with the current lexer location, with
+     * @return {Object} Returns an object with the current target location, with
      * cursor `index`, `line`, and `column` numbers.
      * @api public
      */
 
-    lexer.location = () => new Location(lexer);
+    target.location = () => new Location(target);
 
     /**
      * Returns a function for getting the current position.
      *
      * ```js
-     * const Lexer = require('snapdragon-lexer');
-     * const lexer = new Lexer('foo/bar');
-     * lexer.use(position.plugin());
+     * const Lexer = require('snapdragon-target');
+     * const target = new Lexer('foo/bar');
+     * target.use(position.plugin());
      *
-     * lexer.set('text', function(tok) {
-     *   // get start position before advancing lexer
+     * target.set('text', function(tok) {
+     *   // get start position before advancing target
      *   const pos = this.position();
      *   const match = this.match(/^\w+/);
      *   if (match) {
-     *     // get end position after advancing lexer (with .match)
+     *     // get end position after advancing target (with .match)
      *     return pos(this.token(match));
      *   }
      * });
@@ -121,16 +121,29 @@ position.plugin = () => {
      * @api public
      */
 
-    lexer.position = () => position(lexer);
+    target.position = () => position(target);
 
     /**
-     * Override the `.lex` method to automatically patch
+     * Override the `.lex` method (for older versions of lexer) to automatically patch
      * position onto returned tokens in a future-proof way.
      */
 
-    lexer.lex = (type) => {
-      const pos = lexer.position();
-      const tok = lexer.constructor.prototype.lex.call(lexer, type);
+    target.lex = (type) => {
+      const pos = target.position();
+      const tok = target.constructor.prototype.lex.call(target, type);
+      if (tok) {
+        return pos(tok);
+      }
+    };
+
+    /**
+     * Override the `.handle` method to automatically patch
+     * position onto returned tokens in a future-proof way.
+     */
+
+    target.handle = (type) => {
+      const pos = target.position();
+      const tok = target.constructor.prototype.handle.call(target, type);
       if (tok) {
         return pos(tok);
       }
@@ -139,9 +152,25 @@ position.plugin = () => {
 };
 
 /**
- * Expose `Location` and `Position` classes
+ * Returns true if `target` is an instance of snapdragon lexer or tokenizer
+ */
+
+function isValid(target) {
+  if (target && typeof target === 'object') {
+    return target.isLexer === true || target.isTokenizer === true;
+  }
+  return false;
+}
+
+/**
+ * Main export
  */
 
 module.exports = position;
+
+/**
+ * Expose `Location` and `Position` classes as properties on main export
+ */
+
 module.exports.Location = Location;
 module.exports.Position = Position;
