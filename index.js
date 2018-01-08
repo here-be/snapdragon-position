@@ -69,7 +69,7 @@ function position(lexer) {
  * var Lexer = require('snapdragon-lexer');
  * var position = require('snapdragon-position');
  * var lexer = new Lexer();
- * lexer.use(position.plugin());
+ * lexer.use(position());
  * ```
  * @api public
  */

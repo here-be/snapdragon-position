@@ -21,7 +21,6 @@
   },
   "devDependencies": {
     "@sellside/emitter": "^1.2.1",
-    "define-property": "^2.0.0",
     "gulp-format-md": "^1.0.0",
     "mocha": "^3.5.3",
     "snapdragon-lexer": "^1.0.0",
@@ -57,7 +56,9 @@
     },
     "reflinks": [
       "verb",
-      "verb-generate-readme"
+      "verb-generate-readme",
+      "snapdragon-lexer",
+      "snapdragon-location"
     ],
     "lint": {
       "reflinks": true

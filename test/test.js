@@ -1,7 +1,6 @@
 'use strict';
 
 require('mocha');
-const use = require('use');
 const assert = require('assert');
 const Lexer = require('./support/lexer');
 const position = require('..');
@@ -36,7 +35,7 @@ describe('snapdragon-position', function() {
   it('should work when called on a token instance', function() {
     var pos = lexer.position();
     var token = new Token({type: 'nothing'});
-    pos(token)
+    pos(token);
 
     assert(token.position);
     assert(token.position.start);

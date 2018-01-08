@@ -1,6 +1,5 @@
 'use strict';
 
-const define = require('define-property');
 const Emitter = require('@sellside/emitter');
 const use = require('use');
 class Token {
