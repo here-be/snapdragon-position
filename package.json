@@ -2,11 +2,11 @@
   "name": "snapdragon-position",
   "description": "Snapdragon util and plugin for patching the position on an AST node.",
   "version": "1.0.0",
-  "homepage": "https://github.com/here-be-snapdragons/snapdragon-position",
+  "homepage": "https://github.com/here-be/snapdragon-position",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
-  "repository": "here-be-snapdragons/snapdragon-position",
+  "repository": "here-be/snapdragon-position",
   "bugs": {
-    "url": "https://github.com/here-be-snapdragons/snapdragon-position/issues"
+    "url": "https://github.com/here-be/snapdragon-position/issues"
   },
   "license": "MIT",
   "files": [
@@ -14,16 +14,18 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "scripts": {
     "test": "mocha"
   },
   "devDependencies": {
+    "@sellside/emitter": "^1.2.1",
     "define-property": "^2.0.0",
     "gulp-format-md": "^1.0.0",
     "mocha": "^3.5.3",
-    "use": "^3.0.0"
+    "snapdragon-lexer": "^1.0.0",
+    "use": "^3.1.0"
   },
   "keywords": [
     "compile",
