@@ -1,8 +1,7 @@
 'use strict';
 
 /**
- * Create a new Location object with `index`, `column`,
- * and `line`
+ * Create a new Location object with `index`, `column`, and `line`
  */
 
 class Location {
@@ -14,8 +13,7 @@ class Location {
 }
 
 /**
- * Create a new Position object with `start` and `end`
- * locations.
+ * Create a new Position object with `start` and `end` locations.
  */
 
 class Position {
@@ -53,10 +51,10 @@ function position(lexer) {
   if (!isValid(lexer)) return position.plugin();
   const start = new Location(lexer);
 
-  return (tok) => {
-    tok.position = new Position(start, new Location(lexer));
-    lexer.emit('position', tok);
-    return tok;
+  return (token) => {
+    token.position = new Position(start, new Location(lexer));
+    if (lexer.emit) lexer.emit('position', token);
+    return token;
   };
 }
 
@@ -87,12 +85,12 @@ position.plugin = () => {
      * when needed.
      *
      * ```js
-     * const Lexer = require('snapdragon-target');
-     * const target = new Lexer();
-     * console.log(target.location());
+     * const Lexer = require('snapdragon-lexer');
+     * const lexer = new Lexer();
+     * console.log(lexer.location());
      * //=> Location { index: 0, line: 1, column: 1 };
      * ```
-     * @return {Object} Returns an object with the current target location, with
+     * @return {Object} Returns an object with the current lexer location, with
      * cursor `index`, `line`, and `column` numbers.
      * @api public
      */
@@ -103,16 +101,16 @@ position.plugin = () => {
      * Returns a function for getting the current position.
      *
      * ```js
-     * const Lexer = require('snapdragon-target');
-     * const target = new Lexer('foo/bar');
-     * target.use(position.plugin());
+     * const Lexer = require('snapdragon-lexer');
+     * const lexer = new Lexer('foo/bar');
+     * lexer.use(position.plugin());
      *
-     * target.set('text', function(tok) {
-     *   // get start position before advancing target
+     * lexer.set('text', function(tok) {
+     *   // get start position before advancing lexer
      *   const pos = this.position();
      *   const match = this.match(/^\w+/);
      *   if (match) {
-     *     // get end position after advancing target (with .match)
+     *     // get end position after advancing lexer (with .match)
      *     return pos(this.token(match));
      *   }
      * });
@@ -124,7 +122,7 @@ position.plugin = () => {
     target.position = () => position(target);
 
     /**
-     * Override the `.lex` method (for older versions of lexer) to automatically patch
+     * Override the `.lex` method to automatically patch
      * position onto returned tokens in a future-proof way.
      */
 
