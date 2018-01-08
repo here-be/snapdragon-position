@@ -32,6 +32,10 @@ Changelog entries are classified using the following labels _(from [keep-a-chang
 
 </details>
 
+## [2.0.0] - 2018-01-06
+
+- Adds support for (yet-to-be-released) [snapdragon-tokenizer][tokenizer]
+
 ## [1.0.0] - 2017-11-30
 
 - Refactor to work with [snapdragon-lexer][lexer]
@@ -44,4 +48,5 @@ Changelog entries are classified using the following labels _(from [keep-a-chang
 [keep-a-changelog]: https://github.com/olivierlacan/keep-a-changelog
 
 
+[tokenizer]: https://github.com/here-be/snapdragon-tokenizer
 [lexer]: https://github.com/here-be/snapdragon-lexer
