@@ -5,8 +5,12 @@ const Emitter = require('@sellside/emitter');
 const use = require('use');
 
 class Lexer extends Emitter {
-  constructor(options) {
+  constructor(input, options) {
     super();
+    if (typeof input !== 'string') {
+      options = input;
+      input = '';
+    }
     this.isLexer = true;
     this.options = Object.assign({Token: Token}, options);
     this.Token = this.options.Token;
@@ -15,7 +19,7 @@ class Lexer extends Emitter {
     this.loc = { index: 0, column: 0, line: 1 };
     this.tokens = [];
     this.consumed = '';
-    this.input = '';
+    this.input = input;
     use(this);
   }
   updatePosition(val) {
